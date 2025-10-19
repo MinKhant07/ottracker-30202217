@@ -3,6 +3,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { Heart, Clock, Trash2, Edit2, Check, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -191,81 +192,83 @@ const OTTracker = () => {
                   <p className="text-sm mt-2">OT မှတ်တမ်းထည့်ပါ</p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                  {records.map((record) => (
-                    <div
-                      key={record.date}
-                      className="bg-secondary/50 rounded-lg p-4 border border-primary/10 hover:border-primary/30 transition-colors"
-                    >
-                      {editingDate === record.date ? (
-                        <div className="space-y-3">
+                <ScrollArea className="h-[500px] pr-4">
+                  <div className="space-y-3">
+                    {records.map((record) => (
+                      <div
+                        key={record.date}
+                        className="bg-secondary/50 rounded-lg p-4 border border-primary/10 hover:border-primary/30 transition-colors"
+                      >
+                        {editingDate === record.date ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">
+                                {format(new Date(record.date), "dd/MM/yyyy")}
+                              </span>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={saveEdit}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Check className="w-4 h-4 text-green-600" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={cancelEdit}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <X className="w-4 h-4 text-red-600" />
+                                </Button>
+                              </div>
+                            </div>
+                            <Select value={editingHours} onValueChange={setEditingHours}>
+                              <SelectTrigger className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="0">မဆင်းရဘူး</SelectItem>
+                                <SelectItem value="2">၂ နာရီ</SelectItem>
+                                <SelectItem value="4">၄ နာရီ</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        ) : (
                           <div className="flex items-center justify-between">
-                            <span className="font-medium">
-                              {format(new Date(record.date), "dd/MM/yyyy")}
-                            </span>
+                            <div>
+                              <div className="font-medium">
+                                {format(new Date(record.date), "dd/MM/yyyy")}
+                              </div>
+                              <div className="text-primary font-semibold text-lg">
+                                {getOTLabel(record.hours)}
+                              </div>
+                            </div>
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={saveEdit}
+                                onClick={() => startEdit(record)}
                                 className="h-8 w-8 p-0"
                               >
-                                <Check className="w-4 h-4 text-green-600" />
+                                <Edit2 className="w-4 h-4 text-primary" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={cancelEdit}
+                                onClick={() => handleDelete(record.date)}
                                 className="h-8 w-8 p-0"
                               >
-                                <X className="w-4 h-4 text-red-600" />
+                                <Trash2 className="w-4 h-4 text-destructive" />
                               </Button>
                             </div>
                           </div>
-                          <Select value={editingHours} onValueChange={setEditingHours}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="0">မဆင်းရဘူး</SelectItem>
-                              <SelectItem value="2">၂ နာရီ</SelectItem>
-                              <SelectItem value="4">၄ နာရီ</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium">
-                              {format(new Date(record.date), "dd/MM/yyyy")}
-                            </div>
-                            <div className="text-primary font-semibold text-lg">
-                              {getOTLabel(record.hours)}
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => startEdit(record)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit2 className="w-4 h-4 text-primary" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDelete(record.date)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Trash2 className="w-4 h-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               )}
             </CardContent>
           </Card>
